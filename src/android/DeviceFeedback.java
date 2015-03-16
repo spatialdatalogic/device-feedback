@@ -14,12 +14,14 @@ import android.media.AudioManager;
 //import android.util.Log;
 import android.view.SoundEffectConstants;
 import android.provider.Settings;
+import android.view.View;
 
 /**
  * This class echoes a string called from JavaScript.
  */
 public class DeviceFeedback extends CordovaPlugin {
 	AudioManager audioManager;
+	View view;
 	
 	// input values
 	final static int VIBRATE_TYPE_INDEX = 0;
@@ -29,8 +31,10 @@ public class DeviceFeedback extends CordovaPlugin {
     	audioManager = (AudioManager) cordova.getActivity().getSystemService(Context.AUDIO_SERVICE);
     	//Log.w("DF", "init");
     	super.initialize(cordova, webView);
+    	// CrossWalk incompability (its webView does not provide methods setSoundEffectsEnabled and performHapticFeedback)
+	view = cordova.getActivity().getWindow().getDecorView().getRootView();
     	// this disable default webView sound on touch and click events; does not influence dialogs or other activities
-    	webView.setSoundEffectsEnabled(false);
+    	// webView.setSoundEffectsEnabled(false);
 	}
 
     @Override
@@ -53,7 +57,7 @@ public class DeviceFeedback extends CordovaPlugin {
 	
 	void Vibrate(JSONArray args) {
 		try {
-			webView.performHapticFeedback(args.getInt(VIBRATE_TYPE_INDEX));
+			view.performHapticFeedback(args.getInt(VIBRATE_TYPE_INDEX));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
